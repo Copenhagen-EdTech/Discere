@@ -3,6 +3,8 @@ Main module for Discere.
 """
 import sys
 from PDFTextReader import parse_pdf
+from Segmentation import segment
+from SegmentCleaner import clean_segments
 
 def main():
     """
@@ -14,7 +16,8 @@ def main():
 
     path = sys.argv[1]
     raw_pdf = parse_pdf(path)
-    print(raw_pdf)
+    segments = segment(raw_pdf)
+    clean_segments(segments)
 
 if __name__ == '__main__':
     main()
