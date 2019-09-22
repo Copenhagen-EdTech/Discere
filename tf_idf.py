@@ -6,10 +6,8 @@ Created on Sun Sep 22 13:19:31 2019
 @author: younessubhi
 """
 
-# from PDFTextReader.py import parse_pdf
+from PDFTextReader import parse_pdf
 # import some sort of text
-
-# from freecodecamp.org
 
 # import libraries
 import math
@@ -62,8 +60,8 @@ def computeTFIDF(tfBow, idfs):
 
 ### SAMPLE RUN ###
     
-docA = "Anden Verdenskrig begyndte i 1939"
-docB = 'Hitler startede Anden Verdenskrig'
+docA = parse_pdf('/Users/younessubhi/Documents/GitHub/Discere/course_Book.pdf')
+docB = parse_pdf('/Users/younessubhi/Documents/GitHub/Discere/deep.pdf')
 
 bowA = docA.split(' ')
 bowB = docB.split(' ')
