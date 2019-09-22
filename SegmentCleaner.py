@@ -18,9 +18,9 @@ def __preprocess_gensim(text):
     Tokenizes text and removes stop words
     """
     result = []
-    for token in simple_preprocess(text):
+    for token in set(simple_preprocess(text)):
         if token not in STOPWORDS and len(token) > 3:
-            result.append(__lemmatize_token(token))
+            result.append(token)
 
     return result
 
