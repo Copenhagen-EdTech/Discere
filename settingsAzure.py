@@ -7,6 +7,7 @@ Created on Sun Sep 22 16:09:59 2019
 """
 
 ### settings for azure cognitive services ###
+#added to gitignore
 
 # KimSpeech
 
