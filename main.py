@@ -17,7 +17,7 @@ def main():
     path = sys.argv[1]
     raw_pdf = parse_pdf(path)
     segments = segment(raw_pdf)
-    clean_segments(segments)
+    segments = clean_segments(segments)
 
 if __name__ == '__main__':
     main()

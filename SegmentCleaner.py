@@ -4,10 +4,10 @@ Like removing stop words, stemming if necessary, etc.
 """
 
 import string
+import re
 from nltk.stem import PorterStemmer
 from nltk import word_tokenize
 from nltk import corpus
-import re
 
 def __tokenize_text(text, stem=True):
     """ Tokenize text and stem words removing punctuation """
@@ -30,5 +30,5 @@ def clean_segments(segments):
     After stop word cleaning the remaining words are tokenized and returned as an array.
     """
     c_seg = [__remove_stop_words(s) for s in segments]
-    tokens = [__tokenize_text(cs) for cs in c_seg if cs]
+    tokens = [__tokenize_text(cs, False) for cs in c_seg if cs]
     return tokens
