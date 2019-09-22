@@ -12,8 +12,8 @@ from random import randint
 ## Defining predetirmined questions in dictionary
 QD ={1:"Can you elaborate on _?_",
      2:"Please explain _?_",
-     3:"What do you mean by _?_"
-     }
+     3:"What do you mean by _?_",
+     4:"could you further describe _?_"}
 
 #S = "the spanish inquisition"
 
