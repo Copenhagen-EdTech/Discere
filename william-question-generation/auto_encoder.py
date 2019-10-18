@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 '''
 Auto encoding module for learning af vectorized representation
 of paragraphs and decoding them into questions.
@@ -5,7 +6,7 @@ of paragraphs and decoding them into questions.
 from __future__ import print_function
 import os
 import npy_data_saver as nds
-from keras.models import Model
+from keras.models import Model, load_model
 from keras.layers import Input, LSTM, Dense
 import numpy as np
 
@@ -16,7 +17,7 @@ def create_model(data_path, model_path):
     latent_dim = 256  # Latent dimensionality of the encoding space.
 
     #load data
-    question_data = np.load(data_path)
+    question_data = np.load(data_path, allow_pickle=True)[:50]
 
     # Vectorize the data.
     input_texts = []
@@ -26,18 +27,19 @@ def create_model(data_path, model_path):
 
     #Set up questions and paragraphs in inputs and targets
     for qd in question_data:
-        target = qd[0]
-        for char in target:
-            if char not in target_characters:
-                target_characters.add(char)
+        inp = qd[0]
+        for char in inp:
+            if char not in input_characters:
+                input_characters.add(char)
 
-        inputs = qd[1:]
-        for i in inputs:
+        targets = qd[1:]
+        for t in targets:
+            target = '\t' + t.replace('\t', '').replace('\n', '') + '\n'
+            input_texts.append(inp)
             target_texts.append(target)
-            input_texts.append(i)
-            for char in i:
-                if char not in input_characters:
-                    input_characters.add(char)
+            for char in target:
+                if char not in target_characters:
+                    target_characters.add(char)
 
     input_characters = sorted(list(input_characters))
     target_characters = sorted(list(target_characters))
@@ -99,19 +101,23 @@ def create_model(data_path, model_path):
     decoder_dense = Dense(num_decoder_tokens, activation='softmax')
     decoder_outputs = decoder_dense(decoder_outputs)
 
-    # Define the model that will turn
-    # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
-    model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+    #Load model if exists
+    if os.path.exists(model_path):
+        model = load_model(model_path)
+    else:
+        # Define the model that will turn
+        # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
+        model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-    # Run training
-    model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
-                  metrics=['accuracy'])
-    model.fit([encoder_input_data, decoder_input_data], decoder_target_data,
-              batch_size=batch_size,
-              epochs=epochs,
-              validation_split=0.2)
-    # Save model
-    model.save(model_path)
+        # Run training
+        model.compile(optimizer='rmsprop', loss='categorical_crossentropy',
+                      metrics=['accuracy'])
+        model.fit([encoder_input_data, decoder_input_data], decoder_target_data,
+                  batch_size=batch_size,
+                  epochs=epochs,
+                  validation_split=0.2)
+        # Save model
+        model.save(model_path)
 
     # Next: inference mode (sampling).
     # Here's the drill:
@@ -200,5 +206,4 @@ if __name__ == '__main__':
     
     #Create model if doesn't exist
     model_path = './models/squad_v2_model.h5'
-    if not os.path.exists(model_path):
-        create_model(data_path, model_path)
+    create_model(data_path, model_path)
